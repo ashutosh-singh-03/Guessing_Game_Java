@@ -6,9 +6,21 @@ class Guesser {
     int guessedNumber;
 
     public int getGuessedNumber(Scanner scanner) {
-        System.out.println("Guesser, please enter your number: ");
-        guessedNumber = scanner.nextInt();
-        return guessedNumber;
+        while (true) {
+            try {
+                System.out.println("Guesser, please enter your number (1-100): ");
+                guessedNumber = scanner.nextInt();
+                
+                if (guessedNumber >= 1 && guessedNumber <= 100) {
+                    return guessedNumber;
+                } else {
+                    System.out.println("❌ Please enter a number between 1 and 100!");
+                }
+            } catch (Exception e) {
+                System.out.println("❌ Invalid input! Please enter a valid number.");
+                scanner.next(); // Clear the invalid input
+            }
+        }
     }
 }
 
@@ -16,8 +28,22 @@ class Player {
     int guessedNumber;
 
     public int getGuessedNumber(Scanner scanner) {
-        guessedNumber = scanner.nextInt();
-        return guessedNumber;
+        while (true) {
+            try {
+                guessedNumber = scanner.nextInt();
+                
+                if (guessedNumber >= 1 && guessedNumber <= 100) {
+                    return guessedNumber;
+                } else {
+                    System.out.println("❌ Please enter a number between 1 and 100!");
+                    System.out.print("Try again: ");
+                }
+            } catch (Exception e) {
+                System.out.println("❌ Invalid input! Please enter a valid number.");
+                System.out.print("Try again: ");
+                scanner.next(); // Clear the invalid input
+            }
+        }
     }
 }
 
@@ -30,15 +56,15 @@ class Umpire {
     }
 
     public void collectNumberFromPlayers(Scanner scanner) {
-        System.out.println("Player 1, please enter your guess: ");
+        System.out.println("Player 1, please enter your guess (1-100): ");
         Player player1 = new Player();
         player1Number = player1.getGuessedNumber(scanner);
 
-        System.out.println("Player 2, please enter your guess: ");
+        System.out.println("Player 2, please enter your guess (1-100): ");
         Player player2 = new Player();
         player2Number = player2.getGuessedNumber(scanner);
 
-        System.out.println("Player 3, please enter your guess: ");
+        System.out.println("Player 3, please enter your guess (1-100): ");
         Player player3 = new Player();
         player3Number = player3.getGuessedNumber(scanner);
     }
@@ -92,7 +118,15 @@ public class GuessingGame {
             umpire.compareResults();
             
             System.out.println("\n🔄 Do you want to play another round? (y/n): ");
-            String choice = scanner.next().toLowerCase();
+            String choice;
+            while (true) {
+                choice = scanner.next().toLowerCase();
+                if (choice.equals("y") || choice.equals("yes") || choice.equals("n") || choice.equals("no")) {
+                    break;
+                } else {
+                    System.out.println("❌ Please enter 'y' for yes or 'n' for no: ");
+                }
+            }
             
             if (choice.equals("y") || choice.equals("yes")) {
                 gameCount++;
