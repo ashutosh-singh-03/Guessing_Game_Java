@@ -1,6 +1,7 @@
 package GuessGame;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 class Guesser {
     int guessedNumber;
@@ -48,7 +49,28 @@ class Player {
 }
 
 class Umpire {
-    int guesserNumber, player1Number, player2Number, player3Number;
+    int guesserNumber;
+    int[] playerNumbers;
+    int numberOfPlayers;
+
+    public int getNumberOfPlayers(Scanner scanner) {
+        while (true) {
+            try {
+                System.out.println("How many players will be playing? (2-6): ");
+                numberOfPlayers = scanner.nextInt();
+                
+                if (numberOfPlayers >= 2 && numberOfPlayers <= 6) {
+                    playerNumbers = new int[numberOfPlayers];
+                    return numberOfPlayers;
+                } else {
+                    System.out.println("❌ Please enter a number between 2 and 6!");
+                }
+            } catch (Exception e) {
+                System.out.println("❌ Invalid input! Please enter a valid number.");
+                scanner.next(); // Clear the invalid input
+            }
+        }
+    }
 
     public void collectNumberFromGuesser(Scanner scanner) {
         Guesser guesser = new Guesser();
@@ -56,46 +78,49 @@ class Umpire {
     }
 
     public void collectNumberFromPlayers(Scanner scanner) {
-        System.out.println("Player 1, please enter your guess (1-100): ");
-        Player player1 = new Player();
-        player1Number = player1.getGuessedNumber(scanner);
-
-        System.out.println("Player 2, please enter your guess (1-100): ");
-        Player player2 = new Player();
-        player2Number = player2.getGuessedNumber(scanner);
-
-        System.out.println("Player 3, please enter your guess (1-100): ");
-        Player player3 = new Player();
-        player3Number = player3.getGuessedNumber(scanner);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            System.out.println("Player " + (i + 1) + ", please enter your guess (1-100): ");
+            Player player = new Player();
+            playerNumbers[i] = player.getGuessedNumber(scanner);
+        }
     }
 
     public void compareResults() {
-        if (guesserNumber == player1Number) {
-            if (guesserNumber == player2Number && guesserNumber == player3Number)
-                System.out.println("🎉 Congratulations! All players won the game!");
-            else if (guesserNumber == player2Number)
-                System.out.println("🎉 Congratulations! Player 1 and Player 2 won the game!");
-            else if (guesserNumber == player3Number)
-                System.out.println("🎉 Congratulations! Player 1 and Player 3 won the game!");
-            else
-                System.out.println("🎉 Congratulations! Player 1 won the game!");
-        } else if (guesserNumber == player2Number) {
-            if (guesserNumber == player3Number)
-                System.out.println("🎉 Congratulations! Player 2 and Player 3 won the game!");
-            else
-                System.out.println("🎉 Congratulations! Player 2 won the game!");
-        } else if (guesserNumber == player3Number)
-            System.out.println("🎉 Congratulations! Player 3 won the game!");
-        else
+        ArrayList<Integer> winners = new ArrayList<>();
+        
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (guesserNumber == playerNumbers[i]) {
+                winners.add(i + 1); // Player numbers start from 1
+            }
+        }
+        
+        if (winners.size() == 0) {
             System.out.println("😔 Sorry! All players lost the game. Better luck next time!");
+        } else if (winners.size() == 1) {
+            System.out.println("🎉 Congratulations! Player " + winners.get(0) + " won the game!");
+        } else if (winners.size() == numberOfPlayers) {
+            System.out.println("🎉 Congratulations! All players won the game!");
+        } else {
+            System.out.print("🎉 Congratulations! Player");
+            if (winners.size() == 2) {
+                System.out.print("s " + winners.get(0) + " and " + winners.get(1));
+            } else {
+                System.out.print("s ");
+                for (int i = 0; i < winners.size() - 1; i++) {
+                    System.out.print(winners.get(i) + ", ");
+                }
+                System.out.print("and " + winners.get(winners.size() - 1));
+            }
+            System.out.println(" won the game!");
+        }
     }
 
     public void displayGameSummary() {
         System.out.println("\n📊 === GAME SUMMARY ===");
         System.out.println("Guesser's number: " + guesserNumber);
-        System.out.println("Player 1's guess: " + player1Number);
-        System.out.println("Player 2's guess: " + player2Number);
-        System.out.println("Player 3's guess: " + player3Number);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            System.out.println("Player " + (i + 1) + "'s guess: " + playerNumbers[i]);
+        }
         System.out.println("========================\n");
     }
 }
@@ -112,6 +137,7 @@ public class GuessingGame {
             System.out.println("\n🎮 === ROUND " + gameCount + " ===");
             
             Umpire umpire = new Umpire();
+            umpire.getNumberOfPlayers(scanner);
             umpire.collectNumberFromGuesser(scanner);
             umpire.collectNumberFromPlayers(scanner);
             umpire.displayGameSummary();
