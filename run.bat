@@ -1,5 +1,5 @@
 @echo off
 cd /d "%~dp0"
 javac -d bin src\GuessGame\*.java
-java -cp bin GuessGame.myGuesserGame
+java -cp bin GuessGame.GuessingGame
 pause
